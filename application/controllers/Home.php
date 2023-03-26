@@ -2,10 +2,12 @@
 
 use PhpOffice\PhpWord\PhpWord;
 
+
 defined('BASEPATH') or exit('No direct script access allowed');
 
 class Home extends CI_Controller{
-
+    /** @var Word */
+    var $word;
     function index(){
         $data = [
             'resource' => array('main', 'dore', 'form'),
@@ -32,20 +34,24 @@ class Home extends CI_Controller{
     }
 
     function test(){
-        $name = 'test.docx';
-        $text = "\r\nNO BAGIAN TANDA TANGAN\r\n1.\r\n2.\r\n3.\r\n4.\r\n5.\r\n6.\r\n7.\r\n8.\r\n9. KEUANGAN\r\nADM. KEU\r\nSERTIFIKAT\r\nBEASISWA\r\nAKADEMIK (NILAI)\r\nLABORATORIUM\r\nPERPUSTAKAAN\r\n        - BUKU\r\n        - TP/TA/SKRIPSI\r\nPEMBIMBING\r\nKETUA PRODI\r\n(CD)\r\nWAKIL  REKTOR III\r\n(SERTIFIKAT OPPS)\r\nPUSTIK (Repository)\r\nLPPM (Cek Plagiarisme, Artikel Siap Terbit)\r\n  1.___________________\r\n                                       \r\n  2. ___________________\r\n3.___________________\r\n                                          \r\n                                          4. ___________________\r\n5. ____________________\r\n                                  \r\n                                              6. _________________\r\n7. ____________________                       \r\n                                             8. _________________\r\n             \r\n13398590170009. \r\n\r\n";
-        file_put_contents(get_path(DOCS_PATH . 'tmp/docs/' . $name), $text);
-
-        $name = urldecode($name);
-        $tmp = explode(".", $name);
-        $ext = end($tmp);
-
-        if (!in_array($ext, ['mp4', 'mkv']))
-            $fpath = get_path(DOCS_PATH . 'tmp/docs/' . $name);
-        else
-            $fpath = get_path(DOCS_PATH . 'tmp/video/' . $name);
-        $this->load->helper('download');
-        force_download($name, $text);
+        $this->load->library('Word');
+        $fpath = get_path(DOCS_PATH . 'tmp/docs/');
+       
+        $PHPWord = $this->word; // New Word Document
+        $section = $PHPWord->createSection(); // New portrait section
+        // Add text elements
+        $section->addText('Hello World!');
+        $section->addTextBreak(2);
+        $section->addText('Mohammad Rifqi Sucahyo.', array('name'=>'Verdana', 'color'=>'006699'));
+        $section->addTextBreak(2);
+        $PHPWord->addFontStyle('rStyle', array('bold'=>true, 'italic'=>true, 'size'=>16));
+        $PHPWord->addParagraphStyle('pStyle', array('align'=>'center', 'spaceAfter'=>100));
+        // Save File / Download (Download dialog, prompt user to save or simply open it)
+        $section->addText('Ini Adalah Demo PHPWord untuk CI', 'rStyle', 'pStyle');
+        
+        $filename= 'dadada.docx'; 
+        $objWriter = PHPWord_IOFactory::createWriter($PHPWord, 'Word2007');
+        $objWriter->save($fpath . $filename);
     }
 
     function profile(){
