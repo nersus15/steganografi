@@ -1,143 +1,202 @@
 <?php
 /**
- * PHPWord
+ * This file is part of PHPWord - A pure PHP library for reading and writing
+ * word processing documents.
  *
- * Copyright (c) 2011 PHPWord
+ * PHPWord is free software distributed under the terms of the GNU Lesser
+ * General Public License version 3 as published by the Free Software Foundation.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * For the full copyright and license information, please read the LICENSE
+ * file that was distributed with this source code. For the full list of
+ * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * @category   PHPWord
- * @package    PHPWord
- * @copyright  Copyright (c) 010 PHPWord
- * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt    LGPL
- * @version    Beta 0.6.3, 08.07.2011
+ * @link        https://github.com/PHPOffice/PHPWord
+ * @copyright   2010-2014 PHPWord contributors
+ * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
+namespace PhpOffice\PhpWord\Shared;
 
-if(!defined('DATE_W3C')) {
-	define('DATE_W3C', 'Y-m-d\TH:i:sP');
-}
+use PhpOffice\PhpWord\Settings;
 
+/**
+ * XMLWriter wrapper
+ *
+ * @method bool endElement()
+ * @method bool startDocument(string $version = 1.0, string $encoding = null, string $standalone = null)
+ * @method bool startElement(string $name)
+ * @method bool text(string $content)
+ * @method bool writeAttribute(string $name, mixed $value)
+ * @method bool writeElement(string $name, string $content = null)
+ * @method bool writeRaw(string $content)
+ */
+class XMLWriter
+{
+    /** Temporary storage location */
+    const STORAGE_MEMORY = 1;
+    const STORAGE_DISK = 2;
 
-class PHPWord_Shared_XMLWriter {
-	/** Temporary storage method */
-	const STORAGE_MEMORY = 1;
-	const STORAGE_DISK = 2;
+    /**
+     * Internal XMLWriter
+     *
+     * @var \XMLWriter
+     */
+    private $xmlWriter;
 
-	/**
-	 * Internal XMLWriter
-	 *
-	 * @var XMLWriter
-	 */
-	private $_xmlWriter;
+    /**
+     * Temporary filename
+     *
+     * @var string
+     */
+    private $tempFile = '';
 
-	/**
-	 * Temporary filename
-	 *
-	 * @var string
-	 */
-	private $_tempFileName = '';
+    /**
+     * Create new XMLWriter
+     *
+     * @param int $tempLocation Temporary storage location
+     * @param string $tempFolder Temporary storage folder
+     */
+    public function __construct($tempLocation = self::STORAGE_MEMORY, $tempFolder = './')
+    {
+        // Create internal XMLWriter
+        $this->xmlWriter = new \XMLWriter();
 
-	/**
-	 * Create a new PHPPowerPoint_Shared_XMLWriter instance
-	 *
-	 * @param int		$pTemporaryStorage			Temporary storage location
-	 * @param string	$pTemporaryStorageFolder	Temporary storage folder
-	 */
-	public function __construct($pTemporaryStorage = self::STORAGE_MEMORY, $pTemporaryStorageFolder = './') {
-		// Create internal XMLWriter
-		$this->_xmlWriter = new XMLWriter();
+        // Open temporary storage
+        if ($tempLocation == self::STORAGE_MEMORY) {
+            $this->xmlWriter->openMemory();
+        } else {
+            // Create temporary filename
+            $this->tempFile = tempnam($tempFolder, 'xml');
 
-		// Open temporary storage
-		if ($pTemporaryStorage == self::STORAGE_MEMORY) {
-			$this->_xmlWriter->openMemory();
-		} else {
-			// Create temporary filename
-			$this->_tempFileName = @tempnam($pTemporaryStorageFolder, 'xml');
+            // Fallback to memory when temporary file cannot be used
+            // @codeCoverageIgnoreStart
+            // Can't find any test case. Uncomment when found.
+            if (false === $this->tempFile || false === $this->xmlWriter->openUri($this->tempFile)) {
+                $this->xmlWriter->openMemory();
+            }
+            // @codeCoverageIgnoreEnd
+        }
 
-			// Open storage
-			if ($this->_xmlWriter->openUri($this->_tempFileName) === false) {
-				// Fallback to memory...
-				$this->_xmlWriter->openMemory();
-			}
-		}
+        // Set xml Compatibility
+        $compatibility = Settings::hasCompatibility();
+        if ($compatibility) {
+            $this->xmlWriter->setIndent(false);
+            $this->xmlWriter->setIndentString('');
+        } else {
+            $this->xmlWriter->setIndent(true);
+            $this->xmlWriter->setIndentString('  ');
+        }
+    }
 
-		// Set default values
-		// proposed to be false in production version
-		$this->_xmlWriter->setIndent(true);
-		//$this->_xmlWriter->setIndent(false);
-		
-		// Set indent
-		// proposed to be '' in production version
-		$this->_xmlWriter->setIndentString('  ');
-		//$this->_xmlWriter->setIndentString('');
-	}
+    /**
+     * Destructor
+     */
+    public function __destruct()
+    {
+        // Destruct XMLWriter
+        unset($this->xmlWriter);
 
-	/**
-	 * Destructor
-	 */
-	public function __destruct() {
-		// Desctruct XMLWriter
-		unset($this->_xmlWriter);
+        // Unlink temporary files
+        if ($this->tempFile != '') {
+            @unlink($this->tempFile);
+        }
+    }
 
-		// Unlink temporary files
-		if ($this->_tempFileName != '') {
-			@unlink($this->_tempFileName);
-		}
-	}
+    /**
+     * Catch function calls (and pass them to internal XMLWriter)
+     *
+     * @param mixed $function
+     * @param mixed $args
+     * @throws \BadMethodCallException
+     */
+    public function __call($function, $args)
+    {
+        // Catch exception
+        if (method_exists($this->xmlWriter, $function) === false) {
+            throw new \BadMethodCallException("Method '{$function}' does not exists.");
+        }
 
-	/**
-	 * Get written data
-	 *
-	 * @return $data
-	 */
-	public function getData() {
-		if ($this->_tempFileName == '') {
-			return $this->_xmlWriter->outputMemory(true);
-		} else {
-			$this->_xmlWriter->flush();
-			return file_get_contents($this->_tempFileName);
-		}
-	}
+        // Run method
+        try {
+            @call_user_func_array(array($this->xmlWriter, $function), $args);
+        } catch (\Exception $ex) {
+            // Do nothing!
+        }
+    }
 
-	/**
-	 * Catch function calls (and pass them to internal XMLWriter)
-	 *
-	 * @param unknown_type $function
-	 * @param unknown_type $args
-	 */
-	public function __call($function, $args) {
-		try {
-			@call_user_func_array(array($this->_xmlWriter, $function), $args);
-		} catch (Exception $ex) {
-			// Do nothing!
-		}
-	}
+    /**
+     * Get written data
+     *
+     * @return string XML data
+     */
+    public function getData()
+    {
+        if ($this->tempFile == '') {
+            return $this->xmlWriter->outputMemory(true);
+        } else {
+            $this->xmlWriter->flush();
+            return file_get_contents($this->tempFile);
+        }
+    }
 
-	/**
-	 * Fallback method for writeRaw, introduced in PHP 5.2
-	 *
-	 * @param string $text
-	 * @return string
-	 */
-	public function writeRaw($text)
-	{
-		if (isset($this->_xmlWriter) && is_object($this->_xmlWriter) && (method_exists($this->_xmlWriter, 'writeRaw'))) {
-			return $this->_xmlWriter->writeRaw($text);
-		}
+    /**
+     * Write simple element and attribute(s) block
+     *
+     * There are two options:
+     * 1. If the `$attributes` is an array, then it's an associative array of attributes
+     * 2. If not, then it's a simple attribute-value pair
+     *
+     * @param string $element
+     * @param string|array $attributes
+     * @param string $value
+     * @return void
+     */
+    public function writeElementBlock($element, $attributes, $value = null)
+    {
+        $this->xmlWriter->startElement($element);
+        if (!is_array($attributes)) {
+            $attributes = array($attributes => $value);
+        }
+        foreach ($attributes as $attribute => $value) {
+            $this->xmlWriter->writeAttribute($attribute, $value);
+        }
+        $this->xmlWriter->endElement();
+    }
 
-		return $this->text($text);
-	}
+    /**
+     * Write element if ...
+     *
+     * @param bool $condition
+     * @param string $element
+     * @param string $attribute
+     * @param mixed $value
+     * @return void
+     */
+    public function writeElementIf($condition, $element, $attribute = null, $value = null)
+    {
+        if ($condition == true) {
+            if (is_null($attribute)) {
+                $this->xmlWriter->writeElement($element, $value);
+            } else {
+                $this->xmlWriter->startElement($element);
+                $this->xmlWriter->writeAttribute($attribute, $value);
+                $this->xmlWriter->endElement();
+            }
+        }
+    }
+
+    /**
+     * Write attribute if ...
+     *
+     * @param bool $condition
+     * @param string $attribute
+     * @param mixed $value
+     * @return void
+     */
+    public function writeAttributeIf($condition, $attribute, $value)
+    {
+        if ($condition == true) {
+            $this->xmlWriter->writeAttribute($attribute, $value);
+        }
+    }
 }

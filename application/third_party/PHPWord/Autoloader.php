@@ -1,48 +1,58 @@
 <?php
 /**
- * PHPWord
+ * This file is part of PHPWord - A pure PHP library for reading and writing
+ * word processing documents.
  *
- * Copyright (c) 2011 PHPWord
+ * PHPWord is free software distributed under the terms of the GNU Lesser
+ * General Public License version 3 as published by the Free Software Foundation.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * For the full copyright and license information, please read the LICENSE
+ * file that was distributed with this source code. For the full list of
+ * contributors, visit https://github.com/PHPOffice/PHPWord/contributors.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * @category   PHPWord
- * @package    PHPWord
- * @copyright  Copyright (c) 010 PHPWord
- * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt    LGPL
- * @version    Beta 0.6.3, 08.07.2011
+ * @link        https://github.com/PHPOffice/PHPWord
+ * @copyright   2010-2014 PHPWord contributors
+ * @license     http://www.gnu.org/licenses/lgpl.txt LGPL version 3
  */
 
-class PHPWord_Autoloader
+namespace PhpOffice\PhpWord;
+
+/**
+ * Autoloader
+ */
+class Autoloader
 {
-	public static function Register() {
-		return spl_autoload_register(array('PHPWord_Autoloader', 'Load'));
-	}
+    /** @const string */
+    const NAMESPACE_PREFIX = 'PhpOffice\\PhpWord\\';
 
-	public static function Load($strObjectName) {
-		if((class_exists($strObjectName)) || (strpos($strObjectName, 'PHPWord') === false)) {
-			return false;
-		}
+    /**
+     * Register
+     *
+     * @param bool $throw
+     * @param bool $prepend
+     * @return void
+     */
+    public static function register($throw = true, $prepend = false)
+    {
+        spl_autoload_register(array(new self, 'autoload'), $throw, $prepend);
+    }
 
-		$strObjectFilePath = PHPWORD_BASE_PATH . str_replace('_', '/', $strObjectName) . '.php';
-		
-		if((file_exists($strObjectFilePath) === false) || (is_readable($strObjectFilePath) === false)) {
-			return false;
-		}
-		
-		require($strObjectFilePath);
-	}
+    /**
+     * Autoload
+     *
+     * @param string $class
+     * @return void
+     */
+    public static function autoload($class)
+    {
+        $prefixLength = strlen(self::NAMESPACE_PREFIX);
+        if (0 === strncmp(self::NAMESPACE_PREFIX, $class, $prefixLength)) {
+            $file = str_replace('\\', DIRECTORY_SEPARATOR, substr($class, $prefixLength));
+            $file = realpath(__DIR__ . (empty($file) ? '' : DIRECTORY_SEPARATOR) . $file . '.php');
+            if (file_exists($file)) {
+                /** @noinspection PhpIncludeInspection Dynamic includes */
+                require_once $file;
+            }
+        }
+    }
 }
-?>
