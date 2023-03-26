@@ -3,9 +3,10 @@ use Smalot\PdfParser\Parser;
 
 class ReadWriteDocs{
     /** @var CI_Controller */
-
-    
     private $ci;
+
+    /** @var Word */
+    var $word;
 
     public function __construct() {
         $this->ci =& get_instance();
@@ -32,27 +33,13 @@ class ReadWriteDocs{
         }
 
     }
-    function CreateWordDocument($xmlString) {
-        $templateFolder = $this->config->fileTemplateFolder;
-        if(!endsWith($templateFolder, '/'))
-            $templateFolder = $templateFolder.'/';
-    
-    
-        $temp_file = tempnam(sys_get_temp_dir(), 'coi_').'.docx';
-    
-        copy($templateFolder. 'coi.docx', $temp_file);
-    
-        $zip = new ZipArchive();
-        if($zip->open($temp_file)===TRUE) {
-    
-            $zip->deleteName('word/document.xml');
-            $zip->addFromString("word/document.xml", $xmlString);
-            $zip->close();
-    
-            return $temp_file;
-        }
-        else {
-            return null;
-        }
+    function CreateWordDocument($string, $fpath) {
+        $this->ci->load->library('Word');
+        $PHPWord = $this->word; // New Word Document
+        $section = $PHPWord->createSection(); // New portrait section
+        // Add text elements
+        $section->addText($string);
+        $objWriter = PHPWord_IOFactory::createWriter($PHPWord, 'Word2007');
+        $objWriter->save($fpath);
     }
 }

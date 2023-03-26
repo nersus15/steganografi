@@ -1,7 +1,9 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
+use PhpOffice\PhpWord\Element\Text;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Settings;
 use Smalot\PdfParser\Parser;
 use Xrsa\XRsa;
 
@@ -21,6 +23,9 @@ class Ws extends CI_Controller
 
     /** @var Steganografi */
     var $steganografi;
+
+    /** @var ReadWriteDocs */
+    var $readwritedocs;
 
     function login()
     {
@@ -169,9 +174,8 @@ class Ws extends CI_Controller
             // Fixing bug
             $content = file_get_contents($fpath . $tmpName);
             $encrypted = $xrsa->publicEncrypt($content);
-
-            if($newName['extension'] == 'docx')
-                $newName['extension'] = 'doc';
+            // if($newName['extension'] == 'docx')
+            //     $newName['extension'] = 'doc';
             
             $finalName = random(5) . ' ' . str_replace(['encrypted', 'descrypted', ' encrypted', ' descrypted'], '', $newName['filename']) . ' encrypted.' . $newName['extension'];
             
@@ -183,7 +187,16 @@ class Ws extends CI_Controller
                 $pdf->Write(20, $encrypted);
                 $pdf->Output('F', $fpath . $finalName);
                 // exit;
-            }else{
+            }elseif($newName['extension'] == 'docx'){
+                $this->load->library('Word');
+                $PHPWord = $this->word; // New Word Document
+                $section = $PHPWord->createSection(); // New portrait section
+                // Add text elements
+                $section->addText($encrypted);
+                $objWriter = PHPWord_IOFactory::createWriter($PHPWord, 'Word2007');
+                $objWriter->save($fpath . $finalName);
+            }
+            else{
                 write_file($fpath . $finalName, $encrypted);
             }
             response(['url' => base_url('public/docs/tmp/docs/' . $finalName)]);
@@ -200,7 +213,7 @@ class Ws extends CI_Controller
 
             file_put_contents($fpath . $fname . '.txt', str_replace(['.' . $ext, 'decrypted', 'encrypted', ' decrypted', ' encrypted'],'', $name) . ' encrypted'. $finalExt .'-separator-' . $encrypted);
         } catch (\Throwable $th) {
-            response(['err' => $th->getMessage()], 500);
+            response(['err' => $th->getMessage()] + $th->getTrace(), 500);
         }
         response(['name' => $fname . '.txt']);
     }
@@ -224,15 +237,36 @@ class Ws extends CI_Controller
             $fname = random(8);
             $fpath = get_path(DOCS_PATH . 'tmp/docs/');
             $content = file_get_contents($fpath . $tmpName);
-
             if($ext == 'pdf'){
                 $c = readPdf($fpath . $tmpName);
-               $content = $c['text'];
+                $content = $c['text'];
+            }elseif($ext == 'docx'){
+                
+                // $this->load->library('Word');
+                $this->load->library('Phpword');
+                $PHPWord = $this->word; 
+                $objReader = \PhpOffice\PhpWord\IOFactory::createReader();
+                $phpWord = $objReader->load($fpath . $tmpName); // instance of \PhpOffice\PhpWord\PhpWord
+                $text = '';
+                foreach ($phpWord->getSections() as $section) {
+                    foreach ($section->getElements() as $element) {
+                        if ($element instanceof Text) {
+                            $text .= $element->getText();
+                       }
+                       // and so on for other element types (see src/PhpWord/Element)
+                    }
+                }
+                $content = $text;
             }
+            
             // Fixing Bug
             $newName = getExt($name);
             $descrypted = XRsa::privateDecryptCustom($content, $private_key);
             $finalName = random(5) . ' ' . str_replace(['encrypted', 'descrypted', ' encrypted', ' descrypted'], '', $newName['filename']) . ' descrypted.' . $newName['extension'];
+            
+            // if($newName['extension'] == 'docx'){
+                
+            // }
             write_file($fpath . $finalName, $descrypted);
             response(['url' => base_url('public/docs/tmp/docs/' . $finalName)]);
             force_download($finalName, $descrypted);

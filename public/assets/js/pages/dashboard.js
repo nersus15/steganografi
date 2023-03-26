@@ -63,7 +63,7 @@ $(document).ready(function(){
             var error = res.responseJSON;
             makeToast({
                 title: 'Terjadi kesalahan',
-                message: error.message,
+                message: error.err || error.message,
                 id: 'defaut-config',
                 cara_tempel: 'after',
                 autohide: true,
