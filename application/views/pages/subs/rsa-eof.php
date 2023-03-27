@@ -38,7 +38,7 @@
         <div class="col-sm-12 col-md-6">
             <h2>Deskripsi</h2>
             <div class="alert alert-info" role="alert">
-                <p class="text-white">Setelah proses selesai, file akan otomatis didownload</p>
+                <p class="text-white">Tombol download akan muncul setelah proses selesai</p>
             </div>
             <div class="card mb-4">
                 <div class="card-body">

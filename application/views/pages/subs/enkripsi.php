@@ -7,7 +7,7 @@
 
     <div class="col-sm-12">
         <div class="alert alert-info" role="alert">
-            <p class="text-white">Setelah melakukan enkripsi, file hasil enkripsi akan otomatis didownload</p>
+            <p class="text-white">Setelah proses enkripsi selesai, tombol download akan muncul</p>
         </div>
         <div class="card mb-4">
             <div class="card-body">

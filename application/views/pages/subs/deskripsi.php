@@ -7,7 +7,7 @@
 
      <div class="col-sm-12">
         <div class="alert alert-info" role="alert">
-            <p class="text-white">Setelah melakukan deskripsi, file hasil deskripsi akan otomatis didownload</p>
+            <p class="text-white">Setelah proses deskripsi selesai, tombol download akan muncul</p>
         </div>
         <div class="card mb-4">
             <div class="card-body">

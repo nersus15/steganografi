@@ -7,7 +7,7 @@
 
     <div class="col-12">
         <div class="alert alert-info" role="alert">
-            <p class="text-white">Setelah melakukan ekstraksi, file hasil ekstraksi akan otomatis didownload</p>
+            <p class="text-white">Setelah proses ekstraksi selesai, tombol download akan muncul</p>
         </div>
         <div class="card mb-4">
             <div class="card-body">
