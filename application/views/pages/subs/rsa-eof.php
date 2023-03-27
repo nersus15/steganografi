@@ -53,6 +53,7 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary mb-0">Deskripsi</button>
+                        <a style="display: none;" download id="download-file-deskrip-eof" class="btn btn-outline-info ml-3 mb-0">Download</a>
                     </form>
 
                 </div>
