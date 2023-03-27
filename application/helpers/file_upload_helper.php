@@ -46,7 +46,7 @@ function uploadFile($file, $iname, $type = 'tmp')
     else
         $config['upload_path'] = ASSETS_PATH;
 
-    $config['allowed_types'] = 'pdf|doc|docx|ppt';
+    $config['allowed_types'] = 'pdf|doc|docx|ppt|txt';
     $config['max_size'] = '';
     $config['file_name'] = $file_name;
 
