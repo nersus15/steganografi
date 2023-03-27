@@ -22,10 +22,19 @@ class Ws extends CI_Controller
     var $pdf2text;
 
     /** @var Steganografi */
-    var $steganografi;
+    var $Steganografi;
 
     /** @var ReadWriteDocs */
     var $readwritedocs;
+
+    /** @var CI_Loader */
+    var $load;
+
+    /** @var CI_Input */
+    var $input;
+
+    /** @var Authentication */
+    var $authentication;
 
     function login()
     {
@@ -151,213 +160,93 @@ class Ws extends CI_Controller
     function enkripsi_post()
     {
         try {
-            require_once get_path(APPPATH . '/third_party/liamylian/Xrsa.php');
-
-
-            // $this->load->library('Word');
             $this->load->helper('file_upload_helper');
-            $this->load->helper('download');
-            $this->load->helper('file');
-            $name = $_FILES["file"]["name"];
-            $tmp = explode(".", $name);
-            $ext = end($tmp);
+            $this->load->model('Steganografi');
 
+            $fpath = get_path(DOCS_PATH . 'tmp/docs/');
             $tmpName = uploadFile($_FILES, 'file', 'tmp');
             $public_key = $this->input->post('public_key');
+            $newName = getExt($tmpName);
+            $content = file_get_contents(get_path($fpath . $tmpName));
+            $finalName = random(5) . ' ' . str_replace(['encrypted', 'descrypted', ' encrypted', ' descrypted'], '', $newName['filename']) . ' encrypted.' . $newName['extension'];  
             
-            $xrsa = new Xrsa($public_key);
-            $fname = random(8);
-            $fpath = get_path(DOCS_PATH . 'tmp/docs/');
+            // hitung execution time
+            $time_start = microtime(true);
+            $this->Steganografi->enkripsi($public_key, $content, $finalName);
 
-            $newName = getExt($name);
+            $time_end = microtime(true);
+            $time = $time_end - $time_start;
 
-            // Fixing bug
-            $content = file_get_contents($fpath . $tmpName);
-            $encrypted = $xrsa->publicEncrypt($content);
-            // if($newName['extension'] == 'docx')
-            //     $newName['extension'] = 'doc';
-            
-            $finalName = random(5) . ' ' . str_replace(['encrypted', 'descrypted', ' encrypted', ' descrypted'], '', $newName['filename']) . ' encrypted.' . $newName['extension'];
-            
-            if($newName['extension'] == 'pdf'){
-                require_once get_path(APPPATH . '/third_party/fpdf/fpdf.php');
-                $pdf = new FPDF();
-                $pdf->AddPage();
-                $pdf->SetFont('Arial',);
-                $pdf->Write(20, $encrypted);
-                $pdf->Output('F', $fpath . $finalName);
-                // exit;
-            }elseif($newName['extension'] == 'docx'){
-                $this->load->library('Word');
-                $PHPWord = $this->word; // New Word Document
-                $section = $PHPWord->createSection(); // New portrait section
-                // Add text elements
-                $section->addText($encrypted);
-                $objWriter = PHPWord_IOFactory::createWriter($PHPWord, 'Word2007');
-                $objWriter->save($fpath . $finalName);
-            }
-            else{
-                write_file($fpath . $finalName, $encrypted);
-            }
-            response(['url' => base_url('public/docs/tmp/docs/' . $finalName)]);
-            force_download($finalName, $encrypted, TRUE);
-            exit;
-            $c = $this->readfile($fpath . $tmpName, $ext);
-            
-            $encrypted = $xrsa->publicEncrypt($c);
-            unlink($fpath . $tmpName);
 
-            $finalExt = '.doc';
-            if($ext == 'pdf')
-                $finalExt = '.pdf';
-
-            file_put_contents($fpath . $fname . '.txt', str_replace(['.' . $ext, 'decrypted', 'encrypted', ' decrypted', ' encrypted'],'', $name) . ' encrypted'. $finalExt .'-separator-' . $encrypted);
+            unlink(get_path($fpath . $tmpName));
+            response(['url' => base_url('public/docs/tmp/docs/' . $finalName), 'eta' => number_format($time, 2)]);
         } catch (\Throwable $th) {
             response(['err' => $th->getMessage()] + $th->getTrace(), 500);
         }
-        response(['name' => $fname . '.txt']);
     }
 
     function deskripsi_post()
     {
         try {
-            require_once get_path(APPPATH . '/third_party/liamylian/Xrsa.php');
             $this->load->helper('file_upload_helper');
-            $this->load->helper('download');
-            $this->load->helper('file_reader_helper');
-
-
-            $name = $_FILES["file"]["name"];
-            $tmp = explode(".", $name);
-            $ext = end($tmp);
-
+            $this->load->model('Steganografi');
+           
             $tmpName = customUploadFile($_FILES['file'], 'tmp');
             $private_key = $this->input->post('private_key');
-            
-            $fname = random(8);
             $fpath = get_path(DOCS_PATH . 'tmp/docs/');
-            $content = file_get_contents($fpath . $tmpName);
-            if($ext == 'pdf'){
-                $c = readPdf($fpath . $tmpName);
-                $content = $c['text'];
-            }elseif($ext == 'docx'){
-                
-                // $this->load->library('Word');
-                $this->load->library('Phpword');
-                $PHPWord = $this->word; 
-                $objReader = \PhpOffice\PhpWord\IOFactory::createReader();
-                $phpWord = $objReader->load($fpath . $tmpName); // instance of \PhpOffice\PhpWord\PhpWord
-                $text = '';
-                foreach ($phpWord->getSections() as $section) {
-                    foreach ($section->getElements() as $element) {
-                        if ($element instanceof Text) {
-                            $text .= $element->getText();
-                       }
-                       // and so on for other element types (see src/PhpWord/Element)
-                    }
-                }
-                $content = $text;
-            }
-            
-            // Fixing Bug
-            $newName = getExt($name);
-            $descrypted = XRsa::privateDecryptCustom($content, $private_key);
+            $newName = getExt($tmpName);
             $finalName = random(5) . ' ' . str_replace(['encrypted', 'descrypted', ' encrypted', ' descrypted'], '', $newName['filename']) . ' descrypted.' . $newName['extension'];
-            
-            // if($newName['extension'] == 'docx'){
-                
-            // }
-            write_file($fpath . $finalName, $descrypted);
-            response(['url' => base_url('public/docs/tmp/docs/' . $finalName)]);
-            force_download($finalName, $descrypted);
-            exit;
 
-            $c = $this->readfile($fpath . $tmpName, $ext);
+            // hitung execution time
+            $time_start = microtime(true);
+            $this->Steganografi->deskripsi($private_key, $tmpName, $finalName);
 
-            unlink($fpath . $tmpName);
-            $decrypted = Xrsa::privateDecryptCustom(trim($c), $private_key);
-            $finalExt = '.doc';
-            if($ext == 'pdf')
-                $finalExt = '.pdf';
+            $time_end = microtime(true);
+            $time = $time_end - $time_start;
 
-            file_put_contents($fpath . $fname . '.txt', str_replace(['.' . $ext, 'decrypted', 'encrypted', ' decrypted', ' encrypted'],'', $name) . ' decrypted'. $finalExt .'-separator-' . $decrypted);
-
+            unlink(get_path($fpath . $tmpName));
+            response(['url' => base_url('public/docs/tmp/docs/' . $finalName), 'eta' => number_format($time, 2)]);
         } catch (\Throwable $th) {
             response(['err' => $th->getMessage()], 500);
         }
-        response(['name' => $fname . '.txt']);
     }
 
     function embed_post()
     {
         try {
-            require_once get_path(APPPATH . '/third_party/liamylian/Xrsa.php');
-            $this->load->helper('file_upload_helper');
-            $this->load->helper('download');
+            $this->load->model('Steganografi');
+            
+            // hitung execution time
+            $time_start = microtime(true);
+            $fname = $this->Steganografi->embed($_FILES);
 
-            $vpath = get_path(DOCS_PATH . 'tmp/video/');
-            $fpath = get_path(DOCS_PATH . 'tmp/docs/');
+            $time_end = microtime(true);
+            $time = $time_end - $time_start;
 
-            $eRName= $_FILES["file"]["name"];
-            $tmp = explode(".", $eRName);
-            $eExt = end($tmp);
-
-            $eName = uploadFile($_FILES, 'file');
-            $content = file_get_contents($fpath . $eName);
-            // $content = $this->readfile($fpath . $eName, $eExt);
-
-            $rVName = $_FILES["video"]["name"];
-            $tmp = explode(".", $rVName);
-            $rVExt = end($tmp);
-
-            $salt = random(3);
-            $sVname = str_replace('.' . $rVExt, '', $rVName);
-            $fname = $salt . ' ' . $sVname . ' embeded.' . $rVExt;
-            $vTmpName = uploadVideo($_FILES, 'video', 'tmp');
-            $content2 = file_get_contents($vpath . $vTmpName);
-
-            force_download($fname, $content2 . '-separator-' . $eRName . '-separator-' . $content);
-            exit;
-
-            file_put_contents(get_path(DOCS_PATH . 'tmp/video/' . $fname), $content2 . '-separator-' . $eRName . '-separator-' . $content);
-            unlink($vpath . $vTmpName);
-            unlink($fpath . $eName);
+            response(['url' => base_url('public/docs/tmp/video/' . $fname), 'eta' => number_format($time, 2)]);
         } catch (\Throwable $th) {
             response(['err' => $th->getMessage()], 500);
         }
-        response(['url' => base_url('public/docs/tmp/video/' . $fname)]);
     }
-
-   
 
     function ekstraksi_post()
     {
-        $this->load->helper('download');
+        $this->load->model('Steganografi');
         try {
             if ($_FILES['video']['error'] == UPLOAD_ERR_OK && is_uploaded_file($_FILES['video']['tmp_name'])) {
                 $videoContent = file_get_contents($_FILES['video']['tmp_name']);
             } else {
                 response("Terjadi kesalahan, periksa kembali video yang di upload");
             }
-            $tmp = explode('-separator-', $videoContent);
-            if(count($tmp) != 3)
-                response("File vide yang ingin di ekstrak tidak valid", 403);
+            // hitung execution time
+            $time_start = microtime(true);
 
-            $fpath = get_path(DOCS_PATH . 'tmp/docs/');
-            $fName = $tmp[1];
-            $fData = $tmp[2];
-            $fExt = getExt($fName);
-            $fname = random(8);
+            $fname = $this->Steganografi->ekstract($videoContent);
 
-            force_download($fExt['filename'] . ' extracted.'. $fExt['extension'], $fData);
-            exit;
-            if(in_array($fExt['extension'],['doc', 'docx'])){
-                $finalExt = '.doc';
-            }elseif($fExt['extension'] == 'pdf'){
-                $finalExt = '.pdf';
-            }
-            file_put_contents($fpath . $fname . '.txt', $fExt['filename'] . ' extracted'. $finalExt .'-separator-' . $fData);
+            $time_end = microtime(true);
+            $time = $time_end - $time_start;
 
+            response(['url' => base_url('public/docs/tmp/docs/' . $fname), 'eta' => number_format($time, 2)]);
         } catch (\Throwable $th) {
             response(['err' => $th->getMessage()], 500);
         }
@@ -367,12 +256,29 @@ class Ws extends CI_Controller
     function rsaeof_post($act = null){
         if(empty($act))
             response("Ilegal akses", 403);
-        $this->load->library('Steganografi');
+        $this->load->model('Steganografi');
         
+        $time_start = microtime(true);
+
         if($act == 'enkrip'){
-            $this->steganografi->embedVideo($_FILES, $this->input->post('public_key'));
+            $fname = $this->Steganografi->embed($_FILES, true, $this->input->post('public_key'));
+           
+            $time_end = microtime(true);
+            $time = $time_end - $time_start;
+
+            response(['url' => base_url('public/docs/tmp/video/' . $fname), 'eta' => number_format($time, 2)]);
         }elseif($act == 'deskrip'){
-            $this->steganografi->ekstractFile($_FILES, $this->input->post('private_key'));
+            if ($_FILES['video_enkripted']['error'] == UPLOAD_ERR_OK && is_uploaded_file($_FILES['video_enkripted']['tmp_name'])) {
+                $videoContent = file_get_contents($_FILES['video_enkripted']['tmp_name']);
+            } else {
+                response("Terjadi kesalahan, periksa kembali video yang di upload");
+            }
+
+            $fname = $this->Steganografi->ekstract($videoContent, true, $this->input->post('private_key'));
+            $time_end = microtime(true);
+            $time = $time_end - $time_start;
+
+            response(['url' => base_url('public/docs/tmp/docs/' . $fname), 'eta' => number_format($time, 2)]);
         }
 
     }
@@ -458,35 +364,4 @@ class Ws extends CI_Controller
 
         return $c;
     }
-
-    // private restoreFile(){}
-
-    // function enkripsi_post(){
-    //     require_once get_path(APPPATH . '/third_party/liamylian/Xrsa.php');
-    //     $this->load->helper('file_upload_helper');
-    //     $nama = uploadVideo($_FILES, 'video', 'sample');
-
-    //     // Key
-    //     $key = Xrsa::createKeys();
-    //     // save key
-    //     file_put_contents(get_path(DOCS_PATH . 'pkeys/' . str_replace(['.mp4', '.mkv'], '', $nama)), $key['private_key']);
-    //     file_put_contents(get_path(DOCS_PATH . 'pkeys/' . str_replace(['.mp4', '.mkv'], '', $nama) . '.pub'), $key['public_key']);
-    //     // 
-
-    //     // RSA
-    //     $xrsa = new Xrsa($key['public_key'], $key['private_key']);
-    //     $data = "Hello, World";
-    //     $encrypted = $xrsa->publicEncrypt($data);
-
-    //     $content = file_get_contents(get_path(ASSETS_PATH . 'video/sample/' . $nama), false, null); 
-    //     file_put_contents(get_path(ASSETS_PATH . 'video/sample/' . $nama), $content . $encrypted);
-    // }
-    // function deskripsi($nama){
-    //     require_once get_path(APPPATH . '/third_party/liamylian/Xrsa.php');
-    //     $content = file_get_contents(get_path(ASSETS_PATH . 'video/sample/' . $nama . '.mp4'), false, null, -342);
-    //     $priv = file_get_contents(get_path(DOCS_PATH . 'pkeys/' . $nama), false, null);
-    //     $pub = file_get_contents(get_path(DOCS_PATH . 'pkeys/' . $nama . '.pub'), false, null);
-    //     $xrsa = new Xrsa($pub, $priv);
-    //     echo  $xrsa->privateDecrypt($content);
-    // }
 }
