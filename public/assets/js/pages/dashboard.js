@@ -77,7 +77,19 @@ $(document).ready(function(){
         },
         submitSuccess: function(res){
             endLoading();
-            // window.open(path + 'ws/file/' + res.name, '_blank')
+            makeToast({
+                title: 'Berhasil melakukan enkripsi',
+                message: 'Waktu proses: ' + res.eta + ' detik',
+                id: 'defaut-config',
+                cara_tempel: 'after',
+                autohide: true,
+                show: true,
+                time: moment().format('H:m:s'),
+                hancurkan: true,
+                wrapper: 'body',
+                delay: 5000,
+                bg: 'bg-success'
+            });
             $("#download-video-enkripsi").attr('href', res.url).show().prop('disabled', false);
 
         }
@@ -93,7 +105,7 @@ $(document).ready(function(){
             var error = res.responseJSON;
             makeToast({
                 title: 'Terjadi kesalahan',
-                message: error.message,
+                message: error.err || error.message,
                 id: 'defaut-config',
                 cara_tempel: 'after',
                 autohide: true,
@@ -108,11 +120,23 @@ $(document).ready(function(){
         submitSuccess: function(res){
             endLoading();
             $("#download-video-deskripsi").attr('href', res.url).show().prop('disabled', false);
-            // window.open(path + 'ws/file/' + res.name, '_blank')
+            makeToast({
+                title: 'Berhasil melakukan deskripsi',
+                message: 'Waktu proses: ' + res.eta + ' detik',
+                id: 'defaut-config',
+                cara_tempel: 'after',
+                autohide: true,
+                show: true,
+                time: moment().format('H:m:s'),
+                hancurkan: true,
+                wrapper: 'body',
+                delay: 5000,
+                bg: 'bg-success'
+            });
         }
     });
 
-    $("#form-eofs").initFormAjax({
+    $("#form-eof").initFormAjax({
         sebelumSubmit: function(){
             $("#download-video-eof").attr('href', '').hide().prop('disabled', true);
             showLoading();
@@ -122,7 +146,7 @@ $(document).ready(function(){
             var error = res.responseJSON;
             makeToast({
                 title: 'Terjadi kesalahan',
-                message: error.message,
+                message: error.err || error.message,
                 id: 'defaut-config',
                 cara_tempel: 'after',
                 autohide: true,
@@ -136,12 +160,26 @@ $(document).ready(function(){
         },
         submitSuccess: function(res){
             endLoading();
+            makeToast({
+                title: 'Berhasil melakukan penyisipan file',
+                message: 'Waktu proses: ' + res.eta + ' detik',
+                id: 'defaut-config',
+                cara_tempel: 'after',
+                autohide: true,
+                show: true,
+                time: moment().format('H:m:s'),
+                hancurkan: true,
+                wrapper: 'body',
+                delay: 5000,
+                bg: 'bg-success'
+            });
             $("#download-video-eof").attr('href', res.url).show().prop('disabled', false);
         }
     });
 
-    $("#form-ekstraksi-eofs").initFormAjax({
+    $("#form-ekstraksi-eof").initFormAjax({
         sebelumSubmit: function(){
+            $("#download-file-ekstraksi").attr('href', '').hide().prop('disabled', true);
             showLoading();
         },
         submitError: function(res){
@@ -149,7 +187,7 @@ $(document).ready(function(){
             var error = res.responseJSON;
             makeToast({
                 title: 'Terjadi kesalahan',
-                message: error.message,
+                message: error.err || error.message,
                 id: 'defaut-config',
                 cara_tempel: 'after',
                 autohide: true,
@@ -163,7 +201,20 @@ $(document).ready(function(){
         },
         submitSuccess: function(res){
             endLoading();
-            window.open(path + 'ws/file/' + res.name, '_blank')
+            makeToast({
+                title: 'Berhasil melakukan ekstraksi file',
+                message: 'Waktu proses: ' + res.eta + ' detik',
+                id: 'defaut-config',
+                cara_tempel: 'after',
+                autohide: true,
+                show: true,
+                time: moment().format('H:m:s'),
+                hancurkan: true,
+                wrapper: 'body',
+                delay: 5000,
+                bg: 'bg-success'
+            });
+            $("#download-file-ekstraksi").attr('href', res.url).show().prop('disabled', false);
         }
     });
 
@@ -177,7 +228,7 @@ $(document).ready(function(){
             var error = res.responseJSON;
             makeToast({
                 title: 'Terjadi kesalahan',
-                message: error.message,
+                message: error.err || error.message,
                 id: 'defaut-config',
                 cara_tempel: 'after',
                 autohide: true,
@@ -191,6 +242,19 @@ $(document).ready(function(){
         },
         submitSuccess: function(res){
             endLoading();
+            makeToast({
+                title: 'Berhasil melakukan enkripsi dan penyisipan file',
+                message: 'Waktu proses: ' + res.eta + ' detik',
+                id: 'defaut-config',
+                cara_tempel: 'after',
+                autohide: true,
+                show: true,
+                time: moment().format('H:m:s'),
+                hancurkan: true,
+                wrapper: 'body',
+                delay: 5000,
+                bg: 'bg-success'
+            });
             $("#download-video-rsa-eof").attr('href', res.url).show().prop('disabled', false);
         }
     });
@@ -198,13 +262,14 @@ $(document).ready(function(){
     $("#form-rsa-eof-deskripsi").initFormAjax({
         sebelumSubmit: function(){
             showLoading();
+            $("#download-file-deskrip-eof").attr('href', '').hide().prop('disabled', true);
         },
         submitError: function(res){
             endLoading();
             var error = res.responseJSON;
             makeToast({
                 title: 'Terjadi kesalahan',
-                message: error.message,
+                message: error.err || error.message,
                 id: 'defaut-config',
                 cara_tempel: 'after',
                 autohide: true,
@@ -218,7 +283,20 @@ $(document).ready(function(){
         },
         submitSuccess: function(res){
             endLoading();
-            window.open(path + 'ws/file/' + res.name, '_blank')
+            makeToast({
+                title: 'Berhasil melakukan ekstraksi dan deskripsi file',
+                message: 'Waktu proses: ' + res.eta + ' detik',
+                id: 'defaut-config',
+                cara_tempel: 'after',
+                autohide: true,
+                show: true,
+                time: moment().format('H:m:s'),
+                hancurkan: true,
+                wrapper: 'body',
+                delay: 5000,
+                bg: 'bg-success'
+            });
+            $("#download-file-deskrip-eof").attr('href', res.url).show().prop('disabled', false);
         }
     });
 
