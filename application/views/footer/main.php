@@ -8,7 +8,7 @@
         foreach($extra_js as $js){
             if(!isset($js['attr']))
                 $js['attr'] = null;
-
+            
             if($js['pos'] == 'body:end' && $js['type'] == 'file')
                 echo '<script src="' . base_url('public/assets/' . $js['src']) . '"></script>';
             elseif($js['pos'] == 'body:end' && $js['type'] == 'cache')

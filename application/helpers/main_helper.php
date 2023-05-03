@@ -265,6 +265,14 @@ if (!method_exists($this, 'is_login')) {
         if (!empty($callback) && is_callable($callback))
             return $callback($role, $user, $userdata);
 
+        if(!empty($userdata) && !isset($userdata['role'])){
+            if(!empty($user)){
+                return $userdata['username'] == $user;
+            }else{
+                return !empty($userdata);
+            }
+        }elseif(empty($userdata)) return false;
+        
         if (empty($role) && empty($user)) {
             if (JWT_AUTH)
                 return $isLogin;

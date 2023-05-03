@@ -8,6 +8,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Home extends CI_Controller{
     /** @var Word */
     var $word;
+
+    public function __construct() {
+        parent::__construct();
+        if(!is_login())
+            redirect(base_url('auth/login'));
+    }
     function index(){
         $data = [
             'resource' => array('main', 'dore', 'form'),

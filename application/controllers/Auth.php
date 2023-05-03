@@ -6,7 +6,7 @@ class Auth extends CI_Controller
     function login()
     {
         if(is_login())
-            redirect(base_url("dashboard"));
+            redirect(base_url());
         $data = array(
             'resource' => array('main', 'form', 'login'),
             'content' => array('forms/login2'),
@@ -15,6 +15,11 @@ class Auth extends CI_Controller
         );
         $this->add_cachedJavascript('pages/auth', 'file', 'body:end', array(
             'formid' => '#form-login',
+            'submitSukses' => "function(){
+                setTimeout(function(){
+                    location.href = path;
+                }, 1000)
+            }"
         ));
         $this->removeFromResourceGroup('main', 'vendor/fontawesome/css/all.min.css');
         $this->addViews('template/blank', $data);
