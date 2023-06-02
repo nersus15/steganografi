@@ -1,7 +1,7 @@
 $(document).ready(function(){
     $('body').removeClass('show-spinner');
     var toasCofig = {
-        wrapper: '#navigation',
+        wrapper: 'form',
         id: 'toast',
         delay: 6000,
         autohide: true,
@@ -9,7 +9,7 @@ $(document).ready(function(){
         bg: 'bg-danger',
         textColor: 'text-white',
         time: waktu(null, 'HH:mm'),
-        toastId: 'logout-error',
+        toastId: 'login',
         title: 'Gagal, Terjadi kesalahan',
         type: 'danger',
         hancurkan: true
@@ -22,9 +22,9 @@ $(document).ready(function(){
         submitError: function(response){
             endLoading();
             $('#btn-login').prop('disabled', false);
-            var responseText  = JSON.parse(response.responseText)
-            $('#alert_danger').text(responseText.message).show();
-
+            var responseText  = JSON.parse(response.responseText);
+            toasCofig.message = responseText.message;
+            makeToast(toasCofig);
             if(isFunction(submitError))
                 submitError(response);
 
@@ -37,11 +37,15 @@ $(document).ready(function(){
         submitSuccess: function(data){
             endLoading();
             $('#btn-login').prop('disabled', false);
-            if(!data.token){
-                $('#alert_danger').html(data.message).show();
-            }else{
-                location.href = path + 'admin';
-            }
+
+            toasCofig.bg = 'bg-success';
+            toasCofig.title = 'Berhasil login';
+            toasCofig.type = 'success';
+
+            makeToast(toasCofig)
+            setTimeout(function(){
+                location.href = path;
+            });
             if(isFunction(submitSukses))
                 submitSukses(data);
         }

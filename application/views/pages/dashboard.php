@@ -103,7 +103,7 @@ $menu = [
                     </div>
 
                     <p class="title mt-3">Generate Key</p>
-                    <button id="generate-key" class="btn btn-custom btn-outline-white">Selengkapnya</button>
+                    <button id="generate-key" class="btn btn-custom btn-outline-white"><?= is_login() ? 'Selengkapnya' : 'Harus Login' ?></button>
                 </div>
             </div>
         </div>

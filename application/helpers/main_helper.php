@@ -242,7 +242,6 @@ if (!method_exists($this, 'is_login')) {
     {
         /** @var CI_Controller $ci */
         $ci = &get_instance();
-
         if (!JWT_AUTH)
             $userdata = $ci->session->userdata('login'); //sessiondata('login')
         else {

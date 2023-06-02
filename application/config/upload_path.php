@@ -2,16 +2,16 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 $config['image'] = array(
-    'profile' => ASSETS_PATH . 'img/profile/',
-    'thumb' => 'password' . 'img/barang',
-    'booking' => ASSETS_PATH . 'img/bukti/',
-    'buku' => ASSETS_PATH . 'img/buku/',
+    'profile' => get_path(ASSETS_PATH . 'img/profile/'),
+    'thumb' => 'get_path(password' . 'img/b)arang',
+    'booking' => get_path(ASSETS_PATH . 'img/bukti/'),
+    'buku' => get_path(ASSETS_PATH . 'img/buku/'),
 );
 
 $config['video'] = array(
-    'tmp' => DOCS_PATH . 'tmp/video'
+    'tmp' => get_path(DOCS_PATH . 'tmp/video')
 );
 
 $config['file'] = array(
-    'tmp' => DOCS_PATH . 'tmp/docs'
+    'tmp' => get_path(DOCS_PATH . 'tmp/docs')
 );

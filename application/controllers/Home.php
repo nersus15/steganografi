@@ -14,21 +14,12 @@ class Home extends CI_Controller{
             'content' => array('pages/dashboard'),
             'data_content' => array(
             ),
-            // 'pageName' => 'Main Menu',
-            // 'navbar' => 'component/navbar/navbar.dore',
-            // 'adaThemeSelector' => true,
             'loading_animation' => true,
-            // 'navbarConf' => array(
-            //     'adaUserMenu' => true,
-            //     'adaNotif' => true,
-            //     'pencarian' => false,
-            //     'adaSidebar' => true,
-            //     'homePath' => base_url()
-            // )
         ];
 
-        $this->add_cachedJavascript('pages/dashboard');
-        
+        $this->add_cachedJavascript('pages/dashboard', 'file', 'body:end', [
+            'isLogin' => is_login()
+        ]);
         $this->addViews('template/dore', $data);
         $this->render();   
     }

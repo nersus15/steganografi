@@ -1,10 +1,10 @@
 	
 	<div class="limiter">
-		<div class="container-login100" style="background-image: url('<?= assets_url('themes/mievent/img/slider/0.jpg') ?>');">
+		<div class="container-login100" style="background-image: url('<?= assets_url('img/background/login.jpg') ?>');">
 			<div class="wrap-login100">
 				<form id="form-login" action="<?= base_url('ws/login') ?>" method="POST" class="login100-form validate-form">
 					<span class="login100-form-logo">
-						<img style="width: 95%;" src="<?= assets_url('themes/mievent/img/logo3.png') ?>">
+						<img style="width: 125px;height: 125px;border-radius: 100%;border: 4px white solid;" src="<?= assets_url('img/background/login.jpg') ?>">
 					</span>
 
 					<span class="login100-form-title p-b-34 p-t-27">
@@ -12,7 +12,7 @@
 					</span>
 
 					<div class="wrap-input100 validate-input" data-validate = "Masukkan username atau email">
-						<input class="input100" type="text" name="username" placeholder="Email">
+						<input class="input100" type="text" name="user" placeholder="Email atau username">
 						<span class="focus-input100" data-placeholder="&#xf207;"></span>
 					</div>
 

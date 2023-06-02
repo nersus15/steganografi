@@ -11,19 +11,34 @@
         <div class="alert alert-info" role="alert">
             <p class="text-white">Setelah generate key, disarankan untuk menyimpan key kedalam file.</p>
         </div>
+        <div class="mb-4">
+            <h4>RSA key Anda</h4>
+            <table class="table" id="table-rsa">
+                <thead>
+                    <tr>
+                        <th scope="col" class="text-white">#</th>
+                        <th scope="col" class="text-white">Tgl Generate</th>
+                        <th scope="col" class="text-white">Public Key</th>
+                        <th scope="col" class="text-white">Private Key</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
         <div style="justify-content: space-around;" class="row mb-4">
             <button id="proses-generate-key" class="btn btn-custom btn-outline-white">Generate key</button>
         </div>
 
         <div style="display: none;" class="border p-4" id="public-key">
-            <div style="cursor: pointer;justify-content: flex-end;" id="copy-public-key"  class="row copy-clipboard">
+            <div style="cursor: pointer;justify-content: flex-end;" id="copy-public-key" class="row copy-clipboard">
                 <span><i style="font-size: 15px;" class="iconsmind-File-Copy2"></i> Copy</span>
             </div>
             <p></p>
         </div>
 
         <div style="display: none;" class="border p-4 mt-4" id="private-key">
-            <div style="cursor: pointer;justify-content: flex-end;" id="copy-private-key"  class="row copy-clipboard">
+            <div style="cursor: pointer;justify-content: flex-end;" id="copy-private-key" class="row copy-clipboard">
                 <span><i style="font-size: 15px;" class="iconsmind-File-Copy2"></i> Copy</span>
             </div>
             <p></p>

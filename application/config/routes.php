@@ -57,4 +57,3 @@ $route['translate_uri_dashes'] = FALSE;
 $route['notifcenter'] = 'uihelper/notifcenter';
 $route['profile'] = 'home/profile';
 $route['phpinfo'] = 'home/phpinfo';
-$route['pembayaran/(:any)'] = 'home/pembayaran/$1';

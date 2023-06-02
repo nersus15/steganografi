@@ -89,7 +89,7 @@ defined('EXIT_AUTO_MAX')      OR define('EXIT_AUTO_MAX', 125); // highest automa
 define('PEMASUKAN_DARI_SISWA', array('M01', 'M02', 'M03'));
 define('MYSQL_TIMESTAMP_FORMAT', 'Y-m-d H:i:s');
 define('MYSQL_DATE_FORMAT', 'Y-m-d');
-define('JWT_AUTH', TRUE);
+define('JWT_AUTH', false);
 define('ASSETS_PATH', str_replace('application' . DIRECTORY_SEPARATOR, '', APPPATH) . 'public'.DIRECTORY_SEPARATOR .'assets' . DIRECTORY_SEPARATOR);
 define('DOCS_PATH', str_replace('application' . DIRECTORY_SEPARATOR, '', APPPATH) . 'public'.DIRECTORY_SEPARATOR.'docs' . DIRECTORY_SEPARATOR);
 define ('IS_CORS_ACTIVE', false);

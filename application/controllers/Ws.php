@@ -39,7 +39,7 @@ class Ws extends CI_Controller
     function login()
     {
         if (is_login())
-            redirect('admin/login');
+            redirect(base_url());
         $this->load->library('Authentication');
 
         if (!httpmethod())
@@ -124,16 +124,34 @@ class Ws extends CI_Controller
         }
     }
 
+    function rsakey_get(){
+        if(!is_login())
+            response("Anda tidak memiliki akses", 403);
+        $username = sessiondata('login', 'username');
+        $keys = $this->db->select('private, public, dibuat')->where('user', $username)->get('rsa_keys')->result();
+        
+        response(['data' => $keys]);
+    }
+
     function rsakey_post()
     {
+        // Cek apakah sudah login/tidak
+        if(!is_login())
+            response("Anda tidak memiliki akses", 403);
+
         require_once get_path(APPPATH . '/third_party/liamylian/Xrsa.php');
         $key = Xrsa::createKeys();
         $nama = random(8);
 
+        //Ambil username
+        $username = sessiondata('login', 'username'); 
 
-        // file_put_contents(get_path(DOCS_PATH . 'pkeys/' . $nama . '-private.key'), $key['private_key']);
-        // file_put_contents(get_path(DOCS_PATH . 'pkeys/' . $nama . '-public.key'), $key['public_key']);
-
+        // simpan key ke database
+        $this->db->insert('rsa_keys', [
+            'private' => $key['private_key'],
+            'public' => $key['public_key'],
+            'user' => $username
+        ]);
         response($key);
     }
 
