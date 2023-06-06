@@ -9,7 +9,8 @@ $config['form'] = array(
     'user' => array(
         'username' => 'username',
         'email' => 'email',
-        'password' => 'password'
+        'password' => 'password',
+        'nama' => 'nama_lengkap'
     ),
 );
 

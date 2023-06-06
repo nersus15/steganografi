@@ -48,6 +48,23 @@ class Ws extends CI_Controller
         list($input) = $this->authentication->persiapan($_POST);
         $this->authentication->login($input);
     }
+    function register(){
+        $post = $this->input->post();
+        $input = fieldmapping('user', $post);
+        if($input['password'] != $post['repassword'])
+            response("'Password' dan 'Konfirmasi Password' tidak sama", 403);
+
+        // cek apakah email sudah terdaftar
+        $user = $this->db->where('email', $input['email'])->get('users')->row();
+        if(!empty($user))
+            response("email '<b>" . $input['email'] . "</b>' sudah terdaftar", 403);
+
+        $input['id'] = random(8);
+        $input['password'] = password_hash($input['password'], PASSWORD_DEFAULT);
+        $this->db->insert('users', $input);
+        response("Berhasil mendaftar");
+    }
+
     function update_profile()
     {
         if (!httpmethod())
@@ -100,12 +117,12 @@ class Ws extends CI_Controller
     function cek_username()
     {
         if (!httpmethod()) response("Ilegal Akses", 403);
-        if (!is_login()) response("Anda belum login", 403);
-        if (sessiondata('login', 'username') == $_POST['username']) response(['boleh' => true]);
+        if (is_login()) response("Anda sudah login", 403);
+        // if (sessiondata('login', 'username') == $_POST['username']) response(['boleh' => true]);
         if (!isset($_POST['username']) || empty($_POST['username'])) response(['boleh' => false]);
         $usernameBaru = $_POST['username'];
 
-        $user = $this->db->select('*')->where('username', $usernameBaru)->get('user')->result();
+        $user = $this->db->select('*')->where('username', $usernameBaru)->get('users')->result();
         if (!empty($user))
             response(['boleh' => false]);
         else

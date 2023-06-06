@@ -26,6 +26,7 @@
 							Login
 						</button>
 					</div>
+					<p class="text-white mt-4">Belum punya akun ? <a class="text-info" href="#" id="register">Klik disini</a> untuk membuat akun</p>
 				</form>
 			</div>
 		</div>

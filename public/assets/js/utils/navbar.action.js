@@ -6,8 +6,7 @@ $(document).ready(function(){
 			method: 'GET',
 			success: function(){
 				endLoading();
-
-				location.href = path + 'admin/login'
+				location.href = path + 'login'
 			}, 
 			error: function(err){
 				var err = JSON.parse(err.responseText);

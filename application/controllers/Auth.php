@@ -25,7 +25,9 @@ class Auth extends CI_Controller
         $this->addViews('template/blank', $data);
         $this->render();
     }
-
+    function register(){
+        
+    }
     function logout(){
         // if (!httpmethod())
         //     response(["message" => "Error, Tidak ada method logout[GET]", "type" => 'error'], 405);

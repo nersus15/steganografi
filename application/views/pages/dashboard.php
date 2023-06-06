@@ -105,6 +105,11 @@ $menu = [
                     <p class="title mt-3">Generate Key</p>
                     <button id="generate-key" class="btn btn-custom btn-outline-white"><?= is_login() ? 'Selengkapnya' : 'Harus Login' ?></button>
                 </div>
+                <?php if(!is_login()): ?>
+                <div class="card-footer">
+                    <p><a class="text-primary" href="<?= base_url('login') ?>">Klik disini</a> untuk login</p>
+                </div>
+                <?php endif ?>
             </div>
         </div>
         <div class="col-sm-6 col-md-4">

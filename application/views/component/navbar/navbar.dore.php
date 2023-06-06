@@ -86,7 +86,7 @@
                     <button class="btn btn-empty p-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="name text-primary"><?php echo !empty(sessiondata('login', 'nama_lengkap')) ? sessiondata('login', 'nama_lengkap') : sessiondata('login', 'username') ?></span>
                         <span>
-                            <img class="border border-primary" alt="Profile Picture" src="<?php echo sessiondata('login', 'avatar') ?>" />
+                            <img class="border border-primary" alt="Profile Picture" src="<?php echo assets_url('img/profile/' . sessiondata('login', 'photo', 'default.jpg') ) ?>" />
                         </span>
                     </button>
 
@@ -96,7 +96,7 @@
                                 <p id="<?php echo $menu['id']?>" style="cursor: pointer;" class="dropdown-item" data-link="<?php echo $menu['link'] ?>" ><?php echo $menu['link']; ?></p>
                             <?php endforeach ?>
                         <?php else: ?>
-                            <p id="akun" style="cursor: pointer;" class="dropdown-item" data-link="" >Akun saya</p>
+                            <!-- <p id="akun" style="cursor: pointer;" class="dropdown-item" data-link="" >Akun saya</p> -->
                             <p id="logout" style="cursor: pointer;" class="dropdown-item" data-link="auth/logout" >Keluar</p>
                         <?php endif ?>
                     </div>
