@@ -343,9 +343,12 @@ $(document).ready(function(){
     // Go To Last Page
     var lastPage = localStorage.getItem('lstpg');
     if(cpr == 1 && lastPage){
-        switchHalaman({data: {halaman: lastPage}});
-        if(lastPage == 'generate-key')
+        if(lastPage == 'generate-key'){
+            if(!isLogin)
+                return;
             renderKeys();
+        }
+        switchHalaman({data: {halaman: lastPage}});
     }
 
 
