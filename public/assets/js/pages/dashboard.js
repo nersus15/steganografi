@@ -70,6 +70,7 @@ $(document).ready(function(){
         var pesan = "Public key berhasil di copy";
         if($(this).attr('id') == 'copy-private-key')
             pesan = 'Private key berhasil di copy';
+        if(!$(this).next('p').text()) return;
         copyToClipboard($(this).next('p').text(), pesan);
     });
     $("#form-enkripsi").initFormAjax({
@@ -357,7 +358,7 @@ $(document).ready(function(){
             console.log(keys);
             var row = '';
             keys.forEach((k, i) => {
-                row += ' <tr class="rsa-key text-white" data-index="'+i+'"> <input type="hidden" id="rsa-key-private-'+i+'" value="'+ k.private +'"> <input type="hidden" id="rsa-key-public-'+i+'" value="'+ k.public +'"> <td>'+(i +1) +'</td><td>' + (k.dibuat) + '</td><td style="cursor:pointer" class="public-rsa" data-index="'+i+'">' + ( k.public.substr(0, 15) + ' ...') + ' <span><i style="font-size: 15px;" class="iconsmind-File-Copy2"></i> Copy</span></td><td class="private-rsa" data-index="'+i+'" style="cursor:pointer">' + (k.private.substr(0,15) + ' ...') + ' <span><i style="font-size: 15px;" class="iconsmind-File-Copy2"></i> Copy</span></td></tr>';
+                row += ' <tr class="rsa-key text-white" data-index="'+i+'"> <input type="hidden" id="rsa-key-private-'+i+'" value="'+ k.private +'"> <input type="hidden" id="rsa-key-public-'+i+'" value="'+ k.public +'"> <td>'+(i +1) +'</td><td>' + (k.dibuat) + '</td><td style="cursor:pointer" class="public-rsa" data-index="'+i+'">' + ( k.public.substr(0, 15) + ' ...') + ' <span><i style="font-size: 15px;" class="iconsmind-File-Copy2"></i> Copy</span></td><td class="private-rsa" data-index="'+i+'" style="cursor:pointer">' + (k.private.substr(0,15) + ' ...') + ' <span><i style="font-size: 15px;" class="iconsmind-File-Copy2"></i> Copy</span></td><td><button class="btn btn-xs btn-outline-warning btn-delete-key" data-id="'+ k.id +'" >Hapus Keys</button></td></tr>';
             });
             elements.keys.append(row);
             $(".public-rsa").click(function(){
@@ -375,6 +376,28 @@ $(document).ready(function(){
                 var private = $("#rsa-key-private-" + index).val();
                 copyToClipboard(private, pesan);
 
+            });
+
+            $('.btn-delete-key').click(function(){
+                var c = confirm('Yakin ingin hapus key ?');
+                if(!c) return;
+                $.post(path + 'ws/deletekey', {id: $(this).data('id')}, function(res){
+                    makeToast({
+                        title: 'Berhasil Hapus RSA Key',
+                        message: '',
+                        id: 'defaut-config',
+                        cara_tempel: 'after',
+                        autohide: true,
+                        show: true,
+                        time: moment().format('H:m:s'),
+                        hancurkan: true,
+                        wrapper: 'body',
+                        delay: 5000,
+                        bg: 'bg-success'
+                    });
+                    $("#public-key p, #private-key p").empty();
+                    renderKeys();
+                });
             });
         });
     }

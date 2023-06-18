@@ -140,12 +140,17 @@ class Ws extends CI_Controller
             response(['message' => 'Gagal, Terjadi kesalahan', 'type' => 'error', 'err' => $th], 500);
         }
     }
-
+    function deletekey(){
+        if(!is_login())
+            response("Anda tidak memiliki akses", 403);
+        $id = $this->input->post('id');
+        $keys = $this->db->where('id', $id)->delete('rsa_keys');
+    }
     function rsakey_get(){
         if(!is_login())
             response("Anda tidak memiliki akses", 403);
-        $username = sessiondata('login', 'username');
-        $keys = $this->db->select('private, public, dibuat')->where('user', $username)->get('rsa_keys')->result();
+        $id = sessiondata('login', 'id');
+        $keys = $this->db->select('private, public, dibuat, id')->where('user', $id)->get('rsa_keys')->result();
         
         response(['data' => $keys]);
     }
@@ -161,13 +166,14 @@ class Ws extends CI_Controller
         $nama = random(8);
 
         //Ambil username
-        $username = sessiondata('login', 'username'); 
+        $id = sessiondata('login', 'id'); 
 
         // simpan key ke database
         $this->db->insert('rsa_keys', [
+            'id' => random(8),
             'private' => $key['private_key'],
             'public' => $key['public_key'],
-            'user' => $username
+            'user' => $id
         ]);
         response($key);
     }

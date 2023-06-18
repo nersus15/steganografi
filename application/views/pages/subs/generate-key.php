@@ -20,6 +20,7 @@
                         <th scope="col" class="text-white">Tgl Generate</th>
                         <th scope="col" class="text-white">Public Key</th>
                         <th scope="col" class="text-white">Private Key</th>
+                        <th scope="col" class="text-white"></th>
                     </tr>
                 </thead>
                 <tbody>
