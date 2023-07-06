@@ -59,3 +59,4 @@ $route['register'] = 'auth/register';
 $route['login'] = 'auth/login';
 $route['profile'] = 'home/profile';
 $route['phpinfo'] = 'home/phpinfo';
+$route['logout'] = 'auth/logout';

@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
 |--------------------------------------------------------------------------
@@ -52,7 +52,7 @@ $config['index_page'] = 'index.php';
 |
 | WARNING: If you set this to 'PATH_INFO', URIs will always be URL-decoded!
 */
-$config['uri_protocol']	= 'REQUEST_URI';
+$config['uri_protocol']    = 'REQUEST_URI';
 
 /*
 |--------------------------------------------------------------------------
@@ -76,7 +76,7 @@ $config['url_suffix'] = '';
 | than english.
 |
 */
-$config['language']	= 'english';
+$config['language']    = 'english';
 
 /*
 |--------------------------------------------------------------------------
@@ -376,9 +376,21 @@ $config['encryption_key'] = '';
 | except for 'cookie_prefix' and 'cookie_httponly', which are ignored here.
 |
 */
+/**
+ * Config untuk otomatis logout dalam waktu tertentu menggunakan javascript
+ * jika true default = 12 jam
+ * bisa diisi dengan 1h berarti 1 jam, 1m berarti 1 menit dan 1s berarti 1 detik
+ * bisa juga dengan kombinasi, contoh 1h2m3s atau 2m3s5h atau 2s5h2m
+ * 
+ * Settingan ini bersifat opsional, untuk otomatis logout bisa juga di setting di Config/Session.php
+ */
+$batasTidakAktif = 0; // 0 (ketika browser di tutup), karena ini bukan waktu tidak active tapi secara paksa akan logout ketika waktu yang ditentukan
+$config['autoLogout'] = '30m5s'; // 30 menit 5 detik, agar tidak bentrok antara javascript dan PHP Session
+$config['url_logout'] = ''; // default akan di setting ke /logout
+
 $config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'ci_session';
-$config['sess_expiration'] = 7200;
+$config['sess_expiration'] = $batasTidakAktif;
 $config['sess_save_path'] = '/tmp/sessions/';
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
@@ -399,11 +411,11 @@ $config['sess_regenerate_destroy'] = FALSE;
 |       'cookie_httponly') will also affect sessions.
 |
 */
-$config['cookie_prefix']	= '';
-$config['cookie_domain']	= '';
-$config['cookie_path']		= '/';
-$config['cookie_secure']	= FALSE;
-$config['cookie_httponly'] 	= FALSE;
+$config['cookie_prefix']    = '';
+$config['cookie_domain']    = '';
+$config['cookie_path']        = '/';
+$config['cookie_secure']    = FALSE;
+$config['cookie_httponly']     = FALSE;
 
 /*
 |--------------------------------------------------------------------------
