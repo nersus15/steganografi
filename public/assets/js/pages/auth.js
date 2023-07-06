@@ -39,7 +39,7 @@ $(document).ready(function(){
             endLoading();
             $('#btn-login').prop('disabled', false);
 
-            var tc = {...toasCofig, wrapper: 'form', bg: 'bg-success', title: 'Berhasil login', type: 'success'};
+            var tc = {...toasCofig, message: '', wrapper: 'form', bg: 'bg-success', title: 'Berhasil login', type: 'success'};
             makeToast(tc)
             setTimeout(function(){
                 location.href = path;

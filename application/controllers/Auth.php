@@ -37,7 +37,7 @@ class Auth extends CI_Controller
 
         try {
             $this->session->unset_userdata('login');
-            redirect(base_url());
+            redirect(base_url('login'));
         } catch (\Throwable $th) {
             response(['message' => 'Gagal, Terjadi kesalahan', 'type' => 'error', 'err' => $th], 500);
         }
