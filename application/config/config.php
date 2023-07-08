@@ -377,17 +377,15 @@ $config['encryption_key'] = '';
 |
 */
 /**
- * Config untuk otomatis logout dalam waktu tertentu menggunakan javascript
+ * Config untuk otomatis logout jika user tidak menggukan website (inactive) dalam waktu tertentu menggunakan javascript
  * jika true default = 12 jam
  * bisa diisi dengan 1h berarti 1 jam, 1m berarti 1 menit dan 1s berarti 1 detik
  * bisa juga dengan kombinasi, contoh 1h2m3s atau 2m3s5h atau 2s5h2m
- * 
- * Settingan ini bersifat opsional, untuk otomatis logout bisa juga di setting di Config/Session.php
  */
-$batasTidakAktif = 0; // 0 (ketika browser di tutup), karena ini bukan waktu tidak active tapi secara paksa akan logout ketika waktu yang ditentukan
-$config['autoLogout'] = '30m5s'; // 30 menit 5 detik, agar tidak bentrok antara javascript dan PHP Session
-$config['url_logout'] = ''; // default akan di setting ke /logout
+$config['autoLogout'] = '30m5s'; // 30 menit 5 detik
+$config['url_logout'] = ''; // url yang digunakan untuk logout, default akan di setting ke /logout jika kosong
 
+$batasTidakAktif = 0; // 0 (ketika browser di tutup), ini bukan waktu tidak active (tidak peduli apakah user menggunakan web atau tidak) tapi secara paksa akan menghapus session ketika waktu yang ditentukan
 $config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'ci_session';
 $config['sess_expiration'] = $batasTidakAktif;
