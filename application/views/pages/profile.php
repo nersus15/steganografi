@@ -12,7 +12,7 @@
         <div class="row">
             <div class="col-md-4">
                 <div id="pp" class="profile-img">
-                    <a data-lightbox="pp" data-title="Tekan tombol esc untuk keluar" href="<?php echo base_url('public/assets/img/profile/' . $user['photo']) ?>"><img style="cursor: pointer;" id="pp-preview" src="<?php echo base_url('public/assets/img/profile/' . $user['photo']) ?>" alt="Photo profile" /></a>
+                    <a data-lightbox="pp" data-title="Tekan tombol esc untuk keluar" href="<?php echo base_url('public/assets/img/profile/' . sessiondata('login', 'photo', 'default.jpg')) ?>"><img style="cursor: pointer;" id="pp-preview" src="<?php echo base_url('public/assets/img/profile/' . sessiondata('login', 'photo', 'default.jpg')) ?>" alt="Photo profile" /></a>
                     <label style="cursor: pointer;" id="file" class="file btn btn-lg btn-primary">
                         Change Photo (Max. 5MB)
                         <input accept="image/*" id="n-pp" type="file" name="pp" />
@@ -31,19 +31,12 @@
                         <li class="nav-item">
                             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Akun</a>
                         </li>
-                        <?php if(is_login('member')): ?>
-                            <li class="nav-item">
-                                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Data Member</a>
-                            </li>
-                        <?php endif ?>
                     </ul>
                 </div>
 
                 <div class="tab-content profile-tab" id="myTabContent">
                     <?php 
-                        include_view('pages/profile/user');
-                        if(is_login('member'))
-                            include_view('pages/profile/member'); 
+                        include_view('pages/profile/user'); 
                     ?>
                    
                 </div>

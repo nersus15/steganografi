@@ -80,7 +80,7 @@ class Home extends CI_Controller
             'adaThemeSelector' => true,
             'loadingAnim' => true,
             // 'pageName' => 'Profile',
-            'pageName' => "<a href='" . base_url(is_login('member') ? 'member' : 'dashboard') . "'> <i class='simple-icon-arrow-left'>Kembali</i> </a>",
+            'pageName' => "<a href='" . base_url() . "'> <i class='simple-icon-arrow-left'>Kembali</i> </a>",
             'navbarConf' => array(
                 'adaUserMenu' => true,
                 'adaNotif' => true,
