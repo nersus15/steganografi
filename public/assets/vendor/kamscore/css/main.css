@@ -1,7 +1,14 @@
  body {
     overflow-x: hidden !important;
   }
-  
+  .symbol-required::after{
+    color: rgb(212, 13, 13);
+    content: '*';
+    font-size: 16px;
+  }
+  .form-group .error{
+    color: rgb(212, 13, 13);
+  }
   /* Hide everything under body tag */
   body.show-spinner > *{
     opacity: 0;

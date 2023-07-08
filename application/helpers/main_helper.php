@@ -69,7 +69,7 @@ if (!function_exists('getMimeType')) {
 }
 
 if (!method_exists($this, 'response')) {
-    function response($message = '', $code = 200, $type = 'success', $format = 'json')
+    function response($message = '', $code = 200, $type = 'success', $format = 'json', $injectProperty = true)
     {
         http_response_code($code);
         $responsse = array();
@@ -78,15 +78,17 @@ if (!method_exists($this, 'response')) {
 
         if (is_object($message))
             $message = (array) $message;
-        if (is_string($message) || is_int($message) || is_bool($message))
+        if ((is_string($message) || is_int($message) || is_bool($message)) && $injectProperty)
             $responsse['message'] = $message;
         else
             $responsse = $message;
 
-        if (!isset($message['type']))
-            $responsse['type'] = $type;
-        else
-            $responsse['type'] = $message['type'];
+        if($injectProperty){
+            if (!isset($message['type'])){
+                $responsse['type'] = $type;
+            }else
+                $responsse['type'] = $message['type'];
+        }
 
         if ($code != 200 && $format == 'json')
             header("message: " . json_encode($responsse));

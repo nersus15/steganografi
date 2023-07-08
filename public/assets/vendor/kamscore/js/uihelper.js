@@ -548,6 +548,7 @@ uihelper = function () {
                     var error = opt.submitError ? opt.submitError : () => { };
                     var sebelumSubmit = opt.sebelumSubmit ? opt.sebelumSubmit : () => { };
                     var rules = {};
+                    var ruleMessages = {};
                     var options = {
                         success: succes,
                         error: error,
@@ -559,19 +560,37 @@ uihelper = function () {
 
                     if (opt.rules) {
                         opt.rules.forEach(rule => {
-                            jQuery.validator.addMethod(rule.name, rule.method, rule.message);
-                            rules[rule.field] = {};
-                            rules[rule.field][rule.name] = true;
-
+                            var fieldid = rule.field;
+                            if(!rules[fieldid])
+                                rules[fieldid] = {};
+                            if(!ruleMessages[fieldid])
+                                ruleMessages[fieldid] = {};
+                            if(rule.url){
+                                rules[fieldid]['remote'] = {
+                                    url: rule.url,
+                                    type: 'post'
+                                }
+                            }else{
+                                rules[fieldid][rule.name] = true;
+                                jQuery.validator.addMethod(rule.name, rule.method, rule.message);
+                                ruleMessages[fieldid][rule.name] = rule.message;
+                            }
                         })
                     }
                     window.formOpt = options
+                    window.rules = rules;
                     var instance_validator =  $("#" + formid).validate({
                         rules: rules,
+                        messages: ruleMessages,
                         submitHandler: function (form) {
                             $('#' + formid + ' #alert_danger, #alert_success').html('').hide();
                             $(form).ajaxSubmit(options);
                         }
+                    });
+
+                    // Inject rules untuk jaga jaga
+                    Object.keys(rules).forEach(id => {
+                        $("#" + id).rules('add', {...rules[id], messages: ruleMessages[id]});
                     });
                     
                     this.setInstance('validator', modalId.replaceAll('-', '_'), instance_validator);

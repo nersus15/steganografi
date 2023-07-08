@@ -62,8 +62,36 @@ $(document).ready(function(){
                     {
                         name: 'noSpace',
                         method: function (value, element) { return value.indexOf(" ") < 0; },
-                        message: "No space please",
+                        message: "Tidak boleh ada spasi",
                         field: 'user'
+                    },
+                    {
+                        name: 'uniqeUsername',
+                        url: path + 'ws/cek_username',
+                        field: 'user',
+                        message: 'Username sudah digunakan'
+                    },
+                    {
+                        name: 'uniqueEmail',
+                        url: path + 'ws/cek_email',
+                        field: 'email',
+                        message: 'Email sudah digunakan'
+                    },
+                    {
+                        name: 'securePassword',
+                        method: function(value, element){
+                            return value.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/);
+                        },
+                        message: "Password minimal 8 karakter dan memiliki minimal 1 angka dan 1 huruf",
+                        field: 'pass',
+                    },
+                    {
+                        name: 'repasswordSame',
+                        method: function(value, element){
+                            return value == $("#pass").val();
+                        },
+                        message: "Harus sama dengan password",
+                        field: 'repass'
                     }
                 ],
                 sebelumSubmit: function () {
@@ -107,16 +135,16 @@ $(document).ready(function(){
                             return;
                         }
 
-                        $.post(path + 'ws/cek_username', {username: value}, function(res){
-                            if(res.type != 'success') return;
-                            if(res.boleh){
-                                $('button[type="submit"]').prop('disabled', false);
-                                $("#err-username").hide();
-                            }else{
-                                $('button[type="submit"]').prop('disabled', true);
-                                $("#err-username").show();
-                            }
-                        });
+                        // $.post(path + 'ws/cek_username', {username: value}, function(res){
+                        //     if(res.type != 'success') return;
+                        //     if(res.boleh){
+                        //         $('button[type="submit"]').prop('disabled', false);
+                        //         $("#err-username").hide();
+                        //     }else{
+                        //         $('button[type="submit"]').prop('disabled', true);
+                        //         $("#err-username").show();
+                        //     }
+                        // });
                     });
                 },
                 saatTutup: () => {
@@ -128,30 +156,30 @@ $(document).ready(function(){
                     formAct: path + "ws/register",
                     formMethod: 'POST',
                 },
-                modalTitle: "Login",
+                modalTitle: "Register",
                 modalBody: {
                     input: [
                         {
-                            label: 'Username', placeholder: 'Masukkan Username',
+                            label: 'Username <span class="symbol-required"></span>', placeholder: 'Masukkan Username',
                             type: 'text', name: 'username', id: 'user', attr: 'required autocomplete="off"'
                         },
-                        {
-                            type: 'custom', text: '<p class="text-danger" style="display:none" id="err-username"> Username tidak dapat digunakan karena sudah terdaftar </p>'
-                        },
+                        // {
+                        //     // type: 'custom', text: '<p class="text-danger" style="display:none" id="err-username"> Username tidak dapat digunakan karena sudah terdaftar </p>'
+                        // },
                         {
                             label: 'Nama Lengkap', placeholder: 'Masukkan Nama Lengkap',
                             type: 'text', name: 'nama', id: 'nama', attr: 'autocomplete="off"'
                         },
                         {
-                            label: 'Email', placeholder: 'Masukkan Email',
+                            label: 'Email <span class="symbol-required"></span>', placeholder: 'Masukkan Email',
                             type: 'email', name: 'email', id: 'email', attr: 'required autocomplete="off"'
                         },
                         {
-                            label: 'Password', placeholder: 'Masukkan Password',
+                            label: 'Password <span class="symbol-required"></span>', placeholder: 'Masukkan Password',
                             type: 'password', name: 'password', id: 'pass', attr: 'required autocomplete="off"'
                         },
                         {
-                            label: 'Konfirmasi Password', placeholder: 'Masukkan Password Lagi',
+                            label: 'Konfirmasi Password <span class="symbol-required"></span>', placeholder: 'Masukkan Password Lagi',
                             type: 'password', name: 'repassword', id: 'repass', attr: 'required autocomplete="off"'
                         },
                         

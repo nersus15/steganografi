@@ -119,14 +119,28 @@ class Ws extends CI_Controller
         if (!httpmethod()) response("Ilegal Akses", 403);
         if (is_login()) response("Anda sudah login", 403);
         // if (sessiondata('login', 'username') == $_POST['username']) response(['boleh' => true]);
-        if (!isset($_POST['username']) || empty($_POST['username'])) response(['boleh' => false]);
+        if (!isset($_POST['username']) || empty($_POST['username'])) response('true');
         $usernameBaru = $_POST['username'];
 
         $user = $this->db->select('*')->where('username', $usernameBaru)->get('users')->result();
         if (!empty($user))
-            response(['boleh' => false]);
+            response('Username ' . $usernameBaru . ' sudah digunakan', 200, 'success', 'json', false);
         else
-            response(['boleh' => true]);
+            response('true', 200, 'success', 'json', false);
+    }
+    function cek_email()
+    {
+        if (!httpmethod()) response("Ilegal Akses", 403);
+        if (is_login()) response("Anda sudah login", 403);
+        // if (sessiondata('login', 'username') == $_POST['username']) response(['boleh' => true]);
+        if (!isset($_POST['email']) || empty($_POST['email'])) response('true');
+        $emailBaru = $_POST['email'];
+
+        $user = $this->db->select('*')->where('email', $emailBaru)->get('users')->result();
+        if (!empty($user))
+            response('email ' . $emailBaru . ' sudah digunakan', 200, 'success', 'json', false);
+        else
+            response('true', 200, 'success', 'json', false);
     }
     function logout()
     {
