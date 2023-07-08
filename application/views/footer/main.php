@@ -42,7 +42,7 @@ $urlLogout = empty($urlLogout) ? 'logout' : $urlLogout;
 if ($autoLogout === false)
     $autoLogout = 0;
 elseif ($autoLogout === true)
-    $autoLogout = (12 * 1000 * 60 * 60); // default 12 jam
+    $autoLogout = (12 * 60 * 60); // default 12 jam
 else {
     $arrayOfChars = str_split($autoLogout);
     $jam = 0;
