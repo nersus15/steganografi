@@ -35,6 +35,13 @@ class Ws extends CI_Controller
 
     /** @var Authentication */
     var $authentication;
+    
+    public function __construct() {
+        parent::__construct();
+        
+        // increase maximum execution time
+        set_time_limit(300); // 300 seconds = 5 minutes;
+    }
 
     function login()
     {

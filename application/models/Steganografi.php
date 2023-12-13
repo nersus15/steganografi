@@ -127,7 +127,7 @@ class Steganografi  extends CI_Model{
                 require_once get_path(APPPATH . '/third_party/fpdf/fpdf.php');
                 $pdf = new FPDF();
                 $pdf->AddPage();
-                $pdf->SetFont('Arial',);
+                $pdf->SetFont('Arial');
                 $pdf->Write(20, $data);
                 $pdf->Output('F', get_path($fpath . $fname));
             }elseif($ext == 'docx'){
